@@ -1,4 +1,5 @@
 #include "mytreemodel.h"
+#include "socketconnector.h"
 
 #include <QFile>
 #include <QFileInfo>
@@ -13,7 +14,8 @@
 
 int main(int argc, char *argv[])
 {
-    qmlRegisterType<DBusConnector>("ru.qaengine.qainspector", 1, 0, "RemoteConnection");
+    qmlRegisterType<DBusConnector>("ru.qaengine.qainspector", 1, 0, "DBusConnection");
+    qmlRegisterType<SocketConnector>("ru.qaengine.qainspector", 1, 0, "SocketConnection");
     qmlRegisterType<MyTreeModel>("ru.qaengine.qainspector", 1, 0, "ItemsTreeModes");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
