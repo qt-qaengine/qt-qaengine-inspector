@@ -13,7 +13,7 @@ flatpak install --user flathub org.kde.Sdk/x86_64/5.11 org.kde.Platform/x86_64/5
 ## build
 
 ```
-flatpak-builder --user --install-deps-from=flathub --force-clean --repo=repo  ru.qaengine.qainspector.json
+flatpak-builder --user --install-deps-from=flathub --force-clean --repo=repo build ru.qaengine.qainspector.json
 flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo $(pwd)/repo ru.qaengine.qainspector.flatpak ru.qaengine.qainspector stable
 ```
 
