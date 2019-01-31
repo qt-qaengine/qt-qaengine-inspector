@@ -20,7 +20,7 @@ flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
 ## install
 
 ```
-flatpak --user install ru.qaengine.qainspectorqa insqa.flatpak
+flatpak --user install ru.qaengine.qainspector.flatpak
 ```
 
 ## run
