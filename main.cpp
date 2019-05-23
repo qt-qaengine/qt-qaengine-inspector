@@ -10,11 +10,9 @@
 
 #include <QDebug>
 #include <QTimer>
-#include "dbusconnector.h"
 
 int main(int argc, char *argv[])
 {
-    qmlRegisterType<DBusConnector>("ru.qaengine.qainspector", 1, 0, "DBusConnection");
     qmlRegisterType<SocketConnector>("ru.qaengine.qainspector", 1, 0, "SocketConnection");
     qmlRegisterType<MyTreeModel>("ru.qaengine.qainspector", 1, 0, "ItemsTreeModes");
 
