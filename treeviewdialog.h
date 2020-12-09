@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QDialog>
+#include <QPushButton>
 #include "PaintedWidget.hpp"
 #include "mytreemodel2.h"
 
@@ -14,6 +15,20 @@ class QSettings;
 class QLabel;
 
 class SocketConnector;
+
+class MyPushButton : public QPushButton
+{
+    Q_OBJECT
+public:
+    explicit MyPushButton(QWidget *parent = nullptr);
+    explicit MyPushButton(const QString &text, QWidget *parent = nullptr);
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
+
+signals:
+    void shiftClicked();
+};
 
 class TreeViewDialog : public QDialog
 {
