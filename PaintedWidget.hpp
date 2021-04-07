@@ -12,6 +12,7 @@ public slots:
     void setImage(const QString &path, bool force = false);
     void setItemRect(const QRect &rect);
     void setClickPoint(const QPointF &point);
+    QPointF scaledClickPoint();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -19,6 +20,9 @@ protected:
 private:
     QString m_image;
     QRect m_itemRect;
+    QPointF m_scaledPoint;
     QPointF m_clickPoint;
+
+    float m_ratio = 1.0f;
 };
 

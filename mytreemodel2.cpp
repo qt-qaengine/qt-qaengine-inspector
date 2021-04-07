@@ -453,7 +453,7 @@ QModelIndex MyTreeModel2::searchByCoordinates(qreal posx, qreal posy, TreeItem2 
 
 QModelIndex MyTreeModel2::searchByCoordinates(const QPointF &pos, TreeItem2 *node)
 {
-    return searchByCoordinates(pos.x() * 2, pos.y() * 2, node);
+    return searchByCoordinates(pos.x(), pos.y(), node);
 }
 
 TreeItem2::TreeItem2(const QJsonObject &data, TreeItem2 *parent)
