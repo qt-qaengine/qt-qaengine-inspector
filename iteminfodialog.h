@@ -17,6 +17,7 @@ public slots:
 
 protected:
     bool eventFilter(QObject *o, QEvent *e) override;
+    void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // ITEMINFODIALOG_H
