@@ -20,7 +20,7 @@ public:
 
 public slots:
     QString getDumpTree();
-    bool getGrabWindow();
+    QByteArray getGrabWindow();
 
 signals:
     void connectedChanged(bool connected);

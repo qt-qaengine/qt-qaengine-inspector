@@ -1,6 +1,5 @@
 #include "socketconnector.h"
 
-#include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTcpSocket>
@@ -106,7 +105,7 @@ QString SocketConnector::getDumpTree()
     return QString();
 }
 
-bool SocketConnector::getGrabWindow()
+QByteArray SocketConnector::getGrabWindow()
 {
     QJsonObject json;
     json.insert(QStringLiteral("cmd"), QJsonValue(QStringLiteral("action")));
@@ -131,7 +130,7 @@ bool SocketConnector::getGrabWindow()
         {
             qWarning() << Q_FUNC_INFO << "Timeout" << error.error << error.errorString();
             qDebug().noquote() << replyData;
-            return false;
+            return {};
         }
         replyData.append(m_socket->readAll());
         replyDoc = QJsonDocument::fromJson(replyData, &error);
@@ -141,17 +140,10 @@ bool SocketConnector::getGrabWindow()
     if (replyObject.contains(QStringLiteral("status")) &&
         replyObject.value(QStringLiteral("status")).toInt() == 0)
     {
-
-        QFile file(QStringLiteral("dump.png"));
-        if (file.open(QFile::WriteOnly))
-        {
-            const QByteArray img = QByteArray::fromBase64(
-                replyObject.value(QStringLiteral("value")).toString().toUtf8());
-            qDebug() << Q_FUNC_INFO << file.write(img);
-            file.close();
-        }
-
-        return !data.isEmpty();
+        const QByteArray img =
+            QByteArray::fromBase64(replyObject.value(QStringLiteral("value")).toString().toUtf8());
+        qDebug() << Q_FUNC_INFO << img.size();
+        return img;
     }
-    return false;
+    return {};
 }
