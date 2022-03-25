@@ -1,4 +1,5 @@
 #include "treeviewdialog.h"
+#include <QAbstractEventDispatcher>
 #include <QAction>
 #include <QCheckBox>
 #include <QDebug>
@@ -6,6 +7,7 @@
 #include <QEvent>
 #include <QEventLoop>
 #include <QGroupBox>
+#include <QGuiApplication>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
@@ -266,6 +268,11 @@ QLayout* TreeViewDialog::createSearchLayout()
 
 void TreeViewDialog::closeEvent(QCloseEvent* event)
 {
+    if (dialog->isVisible())
+    {
+        dialog->close();
+    }
+
     settings->setValue("window/geometry", saveGeometry());
     QWidget::closeEvent(event);
 }
@@ -342,12 +349,14 @@ void TreeViewDialog::selectSearchResult(const QModelIndex& index)
 
 void TreeViewDialog::onContextMenuRequested(const QPoint&)
 {
-    auto* dialog = new ItemInfoDialog(this);
-    dialog->setWindowTitle(tr("properties list"));
+    if (!dialog)
+    {
+        dialog = new ItemInfoDialog();
+        dialog->setWindowTitle(tr("properties list"));
+    }
     dialog->setData(model->getData(treeView->currentIndex()));
-    dialog->setModal(true);
     dialog->show();
-    connect(dialog, &QDialog::finished, this, [dialog](int result) { dialog->deleteLater(); });
+    dialog->raise();
 }
 
 bool TreeViewDialog::eventFilter(QObject* obj, QEvent* event)
