@@ -55,10 +55,9 @@ private slots:
     bool eventFilter(QObject* obj, QEvent* event) override;
 
 private:
-    void reloadImage();
+    void dumpTree();
 
     QLayout* createTopLayout();
-    QLayout* createDeviceLayout();
     QLayout* createSearchLayout();
 
     MyTreeModel2* model;
