@@ -5,6 +5,7 @@
 #include <QEvent>
 #include <QJsonObject>
 #include <QScrollArea>
+#include <QSettings>
 #include <QVBoxLayout>
 
 class ItemInfoDialog : public QDialog
@@ -22,6 +23,7 @@ protected:
 
 private:
     QVBoxLayout* formLayout = nullptr;
+    QSettings* settings;
 };
 
 #endif // ITEMINFODIALOG_H
