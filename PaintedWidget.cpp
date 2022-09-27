@@ -57,6 +57,11 @@ QPointF PaintedWidget::scaledClickPoint()
     return m_clickPoint;
 }
 
+float PaintedWidget::scaleRatio()
+{
+    return m_ratio;
+}
+
 void PaintedWidget::paintEvent(QPaintEvent* e)
 {
     QPainter painter(this);
