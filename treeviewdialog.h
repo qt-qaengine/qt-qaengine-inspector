@@ -59,6 +59,7 @@ private slots:
     void dumpScreenshot();
 
 private:
+    int shiftDelay = 10000;
 
     QLayout* createTopLayout();
     QLayout* createSearchLayout();
