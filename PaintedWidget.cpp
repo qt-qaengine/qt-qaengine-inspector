@@ -12,12 +12,13 @@ PaintedWidget::PaintedWidget(QWidget* parent)
     image.load("dump.png");
     if (image.isNull())
     {
-        setFixedSize(1024, 768);
+        resize(1024, 768);
     }
     else
     {
-        setFixedSize(image.size().width(), image.size().height());
+        resize(image.size());
     }
+    // setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 }
 
 void PaintedWidget::setImageData(const QByteArray& data)
@@ -68,8 +69,9 @@ void PaintedWidget::paintEvent(QPaintEvent* e)
 
     QPixmap image;
     image.loadFromData(m_imageData, "PNG");
-    resize(image.size());
-    setMaximumSize(image.size());
+    // setFixedSize(image.size());
+    // resize(image.size());
+    // setMaximumSize(image.size());
     m_ratio = e->rect().width() / (float)image.width();
     m_scaledPoint.setX(m_clickPoint.x() * m_ratio);
     m_scaledPoint.setY(m_clickPoint.y() * m_ratio);
@@ -79,7 +81,7 @@ void PaintedWidget::paintEvent(QPaintEvent* e)
     painter.drawPixmap(0, 0, image);
 
     QFont font = painter.font();
-    font.setPixelSize(8);
+    font.setPixelSize(12);
     painter.setFont(font);
 
     if (!m_itemRect.isNull())
@@ -90,7 +92,7 @@ void PaintedWidget::paintEvent(QPaintEvent* e)
                         m_itemRect.height() * m_ratio);
 
         // draw rect frame
-        painter.setOpacity(0.4);
+        painter.setOpacity(1.0);
 
         QPen pen;
         pen.setWidth(1);
@@ -129,10 +131,10 @@ void PaintedWidget::paintEvent(QPaintEvent* e)
         const QRectF textRect{m_scaledPoint, QSizeF(fontSize)};
 
         // draw click frame
-        painter.setOpacity(0.6);
+        painter.setOpacity(1.0);
 
         QPen pen;
-        pen.setWidth(2);
+        pen.setWidth(0);
         pen.setColor(Qt::white);
         painter.setPen(pen);
         painter.setBrush(Qt::white);
