@@ -45,7 +45,7 @@ public:
         ClassName,
         Text,
         ObjectName,
-        XPath
+        ObjectId,
     };
 
     QVariant data(const QModelIndex &index, int role) const override;
