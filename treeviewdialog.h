@@ -48,6 +48,15 @@ signals:
                 const QModelIndex& currentIndex,
                 TreeItem2* node = nullptr);
 
+    void socketSwapState();
+
+    void getDumpTree();
+    void getGrabWindow();
+
+    void mousePressed(const QPoint &p);
+    void mouseReleased(const QPoint &p);
+    void mouseMoved(const QPoint &p);
+
 private slots:
     void selectSearchResult(const QModelIndex& index);
 
@@ -57,6 +66,9 @@ private slots:
 
     void dumpTree();
     void dumpScreenshot();
+
+    void dumpTreeData(const QByteArray &data);
+    void dumpScreenshotData(const QByteArray &data);
 
 private:
     int shiftDelay = 10000;

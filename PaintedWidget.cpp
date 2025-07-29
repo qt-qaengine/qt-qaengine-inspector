@@ -94,7 +94,7 @@ void PaintedWidget::paintEvent(QPaintEvent* e)
 
         QPen pen;
         pen.setWidth(1);
-        pen.setColor(Qt::black);
+        pen.setColor(QColor("pink"));
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
         painter.drawRect(itemRect);
