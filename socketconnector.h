@@ -22,9 +22,8 @@ public:
     Q_PROPERTY(QString applicationName MEMBER m_applicationName NOTIFY applicationNameChanged)
 
 public slots:
-    QString getDumpTree();
+    QString getDumpTree(const QString &filter = {});
     QByteArray getGrabWindow();
-    QPoint getClick();
 
     void mousePressed(const QPoint &p);
     void mouseReleased(const QPoint &p);
