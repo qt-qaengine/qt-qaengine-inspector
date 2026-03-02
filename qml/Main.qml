@@ -216,6 +216,23 @@ Window {
                 treeModel.loadDump(SocketConnector.getDumpTree(filters))
                 SocketConnector.getGrabWindow()
             }
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+                onClicked: delayDump.start()
+
+                Timer {
+                    id: delayDump
+                    interval: 3000
+                    running: false
+                    repeat: false
+                    onTriggered: {
+                        treeModel.loadDump(SocketConnector.getDumpTree(filters))
+                        SocketConnector.getGrabWindow()
+                    }
+                }
+            }
         }
 
         Button {
@@ -402,6 +419,59 @@ Window {
                     treeView.selectedIndex = newIndex
                 }
 
+                selectionModel: ItemSelectionModel {}
+
+                function clampRow(r) {
+                    return Math.max(0, Math.min(r, treeView.rows - 1))
+                }
+
+                function setCurrentRow(r) {
+                    if (treeView.rows <= 0)
+                        return
+                    r = clampRow(r)
+
+                    const idx = treeView.index(r, 0)
+                    treeView.selectionModel.setCurrentIndex(
+                        idx,
+                        ItemSelectionModel.ClearAndSelect | ItemSelectionModel.Rows
+                    )
+                }
+
+                function ensureCurrent() {
+                    if (treeView.currentRow < 0)
+                        setCurrentRow(0)
+                }
+
+                function canExpandRow(r) {
+                    const idx = treeView.index(r, 0)
+                    return treeView.model && treeView.model.rowCount(idx) > 0
+                }
+
+                Keys.onPressed: (e) => {
+                    if (e.key !== Qt.Key_Left && e.key !== Qt.Key_Right)
+                        return
+
+                    ensureCurrent()
+                    const r = treeView.currentRow
+
+                    if (e.key === Qt.Key_Right) {
+                        if (canExpandRow(r) && !treeView.isExpanded(r)) {
+                            treeView.expand(r)
+                        } else {
+                            setCurrentRow(r + 1)
+                        }
+                        e.accepted = true
+                        return
+                    }
+
+                    if (treeView.isExpanded(r)) {
+                        treeView.collapse(r)
+                    } else {
+                        setCurrentRow(r - 1)
+                    }
+                    e.accepted = true
+                }
+
                 model: TreeModel {
                     id: treeModel
                 }
@@ -409,11 +479,13 @@ Window {
                 delegate: TreeViewDelegate {
                     id: delegate
                     clip: true
+                    height: 20
 
                     readonly property var modelIndex: treeView.modelIndex(Qt.point(column, row))
 
                     Rectangle {
                         anchors.fill: parent
+                        opacity: 0.5
                         color: treeView.selectedIndex
                                ? treeView.selectedIndex === delegate.modelIndex
                                  ? "#cce5ff"
@@ -425,27 +497,28 @@ Window {
 
                     MouseArea {
                         anchors.fill: parent
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        acceptedButtons: Qt.RightButton
 
-                        onClicked: mouse => {
-                            treeView.selectedIndex = delegate.modelIndex
-                            if (mouse.button === Qt.RightButton) {
-                                const props = treeModel.getDataVariant(delegate.modelIndex)
-                                propsPopup.showData(props)
-                            } else {
-                                if (analyzeWindow.visible && analyzeWindow.refineIndex >= 0) {
-                                    const m = treeModel.getDataVariant(delegate.modelIndex)
-                                    const loc = analyzeModel.get(analyzeWindow.refineIndex).location
-                                    SocketConnector.manager.refine(loc, m.id)
-                                    analyzeModel.setProperty(analyzeWindow.refineIndex, "id", m.id)
-                                    analyzeWindow.refineIndex = -1
-                                }
-                            }
+                        onClicked: {
+                            const props = treeModel.getDataVariant(delegate.modelIndex)
+                            propsPopup.showData(props)
                         }
+                    }
 
-                        onDoubleClicked: {
-                            clipboard.copyText(model.display)
+                    onClicked: {
+                        const mouse = Qt.point(pressX, pressY)
+                        treeView.selectedIndex = delegate.modelIndex
+                        if (analyzeWindow.visible && analyzeWindow.refineIndex >= 0) {
+                            const m = treeModel.getDataVariant(delegate.modelIndex)
+                            const loc = analyzeModel.get(analyzeWindow.refineIndex).location
+                            SocketConnector.manager.refine(loc, m.id)
+                            analyzeModel.setProperty(analyzeWindow.refineIndex, "id", m.id)
+                            analyzeWindow.refineIndex = -1
                         }
+                    }
+
+                    onDoubleClicked: {
+                        clipboard.copyText(model.display)
                     }
 
                     MouseArea {
@@ -480,6 +553,7 @@ Window {
                     }
                 }
 
+                rowHeightProvider: row => 20
                 columnWidthProvider: column => widths[column]
 
                 ScrollBar.vertical: ScrollBar {
@@ -842,6 +916,8 @@ Window {
             height: 30
 
             RowLayout {
+                spacing: 8
+
                 Button {
                     text: analyzeWindow.analyzeActive ? "Stop" : "Start"
                     enabled: SocketConnector.connected
@@ -852,6 +928,15 @@ Window {
                         } else {
                             SocketConnector.stopAnalyze()
                         }
+                    }
+                }
+
+                Button {
+                    text: "Remove all"
+                    enabled: analyzeModel.count > 0
+                    onClicked: {
+                        SocketConnector.manager.clear()
+                        analyzeModel.clear()
                     }
                 }
             }

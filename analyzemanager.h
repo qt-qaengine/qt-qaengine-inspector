@@ -13,6 +13,7 @@ public:
 
     Q_INVOKABLE void load();
     Q_INVOKABLE void remove(const QString &location);
+    Q_INVOKABLE void clear();
     Q_INVOKABLE void refine(const QString &location, const QString &id);
 
 signals:

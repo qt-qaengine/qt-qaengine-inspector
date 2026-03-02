@@ -90,6 +90,26 @@ void AnalyzeManager::remove(const QString &location)
     }
 }
 
+void AnalyzeManager::clear()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    const auto dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir dirPath(dir);
+    if (!dirPath.exists())
+    {
+        qWarning() << Q_FUNC_INFO << "Data directory does not exist:" << dir;
+        return;
+    }
+
+    const QStringList files = dirPath.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const QString &file : files)
+    {
+        const QString location = dirPath.absoluteFilePath(file);
+        remove(location);
+    }
+}
+
 void AnalyzeManager::refine(const QString &location, const QString &id)
 {
     qDebug() << Q_FUNC_INFO << location << id;
