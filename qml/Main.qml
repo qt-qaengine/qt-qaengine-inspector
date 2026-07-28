@@ -5,11 +5,17 @@ import QtCore
 
 import org.qaengine.qainspector
 
-Window {
+ApplicationWindow {
     width: 1200
     height: 800
     visible: true
     title: qsTr("QAInspector")
+    color: sysPalette.window
+
+    SystemPalette {
+        id: sysPalette
+        colorGroup: SystemPalette.Active
+    }
 
     property var widths: [200, 120, 120, 100, 50, 50, 50, 50, 50, 50]
     readonly property int totalWidth: widths.reduce((a, b) => a + b, 0)
@@ -277,8 +283,7 @@ Window {
             Rectangle {
                 implicitWidth: splitView.orientation === Qt.Horizontal ? 1 : splitView.width
                 implicitHeight: splitView.orientation === Qt.Horizontal ? splitView.height : 1
-                color: "black"
-                opacity: 0.4
+                color: sysPalette.mid
             }
 
             containmentMask: Item {
@@ -345,12 +350,13 @@ Window {
                     Rectangle {
                         width: widths[index]
                         height: parent.height
-                        color: "#eee"
-                        border.color: "#aaa"
+                        color: sysPalette.button
+                        border.color: sysPalette.mid
                         Text {
                             anchors.fill: parent
                             anchors.margins: 4
                             text: treeModel.headers()[index]
+                            color: sysPalette.buttonText
                             verticalAlignment: Text.AlignVCenter
                             font.bold: true
                             elide: Text.ElideRight
@@ -485,12 +491,11 @@ Window {
 
                     Rectangle {
                         anchors.fill: parent
-                        opacity: 0.5
                         color: treeView.selectedIndex
                                ? treeView.selectedIndex === delegate.modelIndex
-                                 ? "#cce5ff"
+                                 ? Qt.alpha(sysPalette.highlight, 0.45)
                                  : treeView.selectedIndex.internalId == delegate.modelIndex.internalId
-                                   ? "#e2eeff"
+                                   ? Qt.alpha(sysPalette.highlight, 0.25)
                                    : "transparent"
                                : "transparent"
                     }
@@ -645,6 +650,7 @@ Window {
     Window {
         id: filtersPopup
         title: "Filters"
+        color: sysPalette.window
 
         width: 400
         height: minimumHeight
@@ -756,6 +762,7 @@ Window {
     Window {
         id: propsPopup
         title: "item properties"
+        color: sysPalette.window
 
         width: 350
         height: 600
@@ -800,8 +807,7 @@ Window {
                     Rectangle {
                         implicitWidth: split.orientation === Qt.Horizontal ? 1 : split.width
                         implicitHeight: split.orientation === Qt.Horizontal ? split.height : 1
-                        color: "black"
-                        opacity: 0.4
+                        color: sysPalette.mid
                     }
 
                     containmentMask: Item {
@@ -880,6 +886,7 @@ Window {
         width: minimumWidth
         minimumWidth: 400
         height: 800
+        color: sysPalette.window
 
         title: "Analyze tool"
 
@@ -989,7 +996,7 @@ Window {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "#10000000"
+                    color: Qt.alpha(sysPalette.highlight, 0.2)
                     visible: analyzeView.currentIndex === index
                 }
 
@@ -1026,6 +1033,7 @@ Window {
                     Text {
                         Layout.fillWidth: true
                         text: Qt.formatDateTime(new Date(parseInt(model.location.split('/').pop())), "yyyy-MM-dd hh:mm:ss")
+                        color: sysPalette.windowText
                         padding: 4
                     }
 

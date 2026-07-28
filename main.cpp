@@ -6,6 +6,8 @@
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_QUICK_CONTROLS_STYLE", "Fusion");
+
     QGuiApplication app(argc, argv);
     app.setApplicationName("qainspector");
     app.setOrganizationName("coderus");
