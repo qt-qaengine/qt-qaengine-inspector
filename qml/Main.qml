@@ -1,15 +1,18 @@
+// SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+// Copyright (c) 2026 Andrei Kozhevnikov <coderusinbox@gmail.com>
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtCore
 
-import org.qaengine.qainspector
+import qtqaengine.inspector
 
 ApplicationWindow {
     width: 1200
     height: 800
     visible: true
-    title: qsTr("QAInspector")
+    title: qsTr("Qt QA Engine Inspector")
     color: sysPalette.window
 
     SystemPalette {
@@ -20,7 +23,7 @@ ApplicationWindow {
     property var widths: [200, 120, 120, 100, 50, 50, 50, 50, 50, 50]
     readonly property int totalWidth: widths.reduce((a, b) => a + b, 0)
 
-    readonly property string settingsLocation: StandardPaths.writableLocation(StandardPaths.AppConfigLocation) + "/qainspector.ini"
+    readonly property string settingsLocation: StandardPaths.writableLocation(StandardPaths.AppConfigLocation) + "/qt-qaengine-inspector.ini"
 
     minimumWidth: 600
     minimumHeight: 300
@@ -186,7 +189,7 @@ ApplicationWindow {
             rightPadding: 5
 
             placeholderText: "port"
-            text: "8888"
+            text: "8900"
 
             implicitWidth: 50
 

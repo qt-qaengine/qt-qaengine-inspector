@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+// Copyright (c) 2026 Andrei Kozhevnikov <coderusinbox@gmail.com>
+
 #include "socketconnector.h"
 
 #include <QJsonDocument>
@@ -16,19 +19,49 @@ SocketConnector::SocketConnector(QObject* parent)
             &QTcpSocket::connected,
             [this]()
             {
+                auto writeLine = [this](const QJsonObject& json)
+                {
+                    m_socket->write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+                    m_socket->write("\n", 1);
+                    m_socket->waitForBytesWritten();
+                };
+                auto readObject = [this]()
+                {
+                    QByteArray replyData;
+                    QJsonParseError error;
+                    error.error = QJsonParseError::UnterminatedObject;
+                    QJsonDocument replyDoc;
+                    while (error.error != QJsonParseError::NoError)
+                    {
+                        if (!m_socket->waitForReadyRead(3000))
+                        {
+                            return QJsonObject();
+                        }
+                        replyData.append(m_socket->readAll());
+                        replyDoc = QJsonDocument::fromJson(replyData, &error);
+                    }
+                    return replyDoc.object();
+                };
+
+                QJsonObject hello;
+                hello.insert(QStringLiteral("cmd"), QStringLiteral("hello"));
+                hello.insert(QStringLiteral("protocol"), 1);
+                writeLine(hello);
+                const QJsonObject helloReply = readObject();
+                if (helloReply.value(QStringLiteral("protocol")).toInt() != 1
+                    || helloReply.value(QStringLiteral("product")).toString() != QLatin1String("qt-qaengine"))
+                {
+                    m_socket->close();
+                    return;
+                }
+
                 QJsonObject json;
                 json.insert(QStringLiteral("cmd"), QJsonValue(QStringLiteral("action")));
                 json.insert(QStringLiteral("action"), QJsonValue(QStringLiteral("initialize")));
                 json.insert(QStringLiteral("params"),
                             QJsonValue::fromVariant(QStringList({m_applicationName})));
-                const QByteArray data = QJsonDocument(json).toJson(QJsonDocument::Compact);
-
-                m_socket->write(data);
-                m_socket->write("\n", 1);
-                m_socket->waitForBytesWritten();
-
-                m_socket->waitForReadyRead(500);
-                qDebug().noquote() << m_socket->readAll();
+                writeLine(json);
+                qDebug().noquote() << QJsonDocument(readObject()).toJson(QJsonDocument::Compact);
 
                 qWarning() << Q_FUNC_INFO << "connected";
                 emit connectedChanged(true);
